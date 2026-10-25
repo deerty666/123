@@ -1,0 +1,33 @@
+{
+  "id": "./",
+  "name": "حسابات السائقين - مطاعم ديرتي",
+  "short_name": "حسابات ديرتي",
+  "description": "تطبيق إدارة فواتير صرف الأصناف وحسابات السائقين اليومية لمطاعم ومطابخ سحايب ديرتي",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#100d0a",
+  "theme_color": "#17120e",
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ],
+  "icons": [
+    {
+      "src": "./lcon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./lcon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
