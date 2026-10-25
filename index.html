@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+  <meta name="theme-color" content="#17120e">
+  <meta name="description" content="نظام إدارة فواتير صرف الأصناف وحسابات السائقين اليومية - ديرتي">
+
+  <title>حسابات السائقين | ديرتي</title>
+
+  <link rel="manifest" href="./manifest.json">
+  <link rel="stylesheet" href="./style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body>
+
+  <!-- رأس التطبيق -->
+  <header class="app-header">
+    <div class="brand">
+      <div class="brand-logo">د</div>
+
+      <div>
+        <h1>حسابات السائقين</h1>
+        <p>مطاعم ومطابخ سحايب ديرتي</p>
+      </div>
+    </div>
+
+    <div class="header-date" id="todayDate">--</div>
+  </header>
+
+
+  <main class="container">
+
+    <!-- =====================================
+         الصفحة الرئيسية المبسطة للعامل
+    ====================================== -->
+    <section id="page-dashboard" class="page active">
+
+      <div class="welcome-card">
+        <div>
+          <span class="welcome-label">نظام الحسابات اليومية</span>
+          <h2>حياك الله 👋</h2>
+          <p>كل عمليات الصرف وحسابات السائقين في مكان واحد.</p>
+        </div>
+
+        <div class="welcome-icon">🧾</div>
+      </div>
+
+
+      <!-- ملخص اليوم -->
+      <div class="stats-grid">
+
+        <div class="stat-card">
+          <span class="stat-icon">📄</span>
+          <span class="stat-title">فواتير اليوم</span>
+          <strong id="statInvoices">0</strong>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-icon">🚚</span>
+          <span class="stat-title">عدد السائقين</span>
+          <strong id="statDrivers">0</strong>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-icon">📦</span>
+          <span class="stat-title">الأصناف المصروفة</span>
+          <strong id="statItems">0</strong>
+        </div>
+
+        <div class="stat-card">
+          <span class="stat-icon">💰</span>
+          <span class="stat-title">إجمالي صرف اليوم</span>
+          <strong id="statTotal">0.00 ر.س</strong>
+        </div>
+
+      </div>
+
+
+      <!-- زر الصرف الرئيسي -->
+      <div class="worker-home">
+
+        <button
+          class="worker-main-button"
+          data-page="invoice"
+          type="button">
+
+          <span class="worker-main-icon">🧾</span>
+
+          <strong>صرف أصناف لسائق</strong>
+
+          <span>إصدار فاتورة جديدة بخطوات سهلة</span>
+
+          <span class="worker-arrow">←</span>
+
+        </button>
+
+
+        <!-- الاختصارات -->
+        <div class="worker-shortcuts">
+
+          <button
+            class="worker-shortcut"
+            data-page="reports"
+            type="button">
+
+            <span>📊</span>
+
+            <strong>حسابات اليوم</strong>
+
+            <small>عرض حسابات السائقين</small>
+
+          </button>
+
+
+          <button
+            class="worker-shortcut"
+            data-page="archive"
+            type="button">
+
+            <span>🗂️</span>
+
+            <strong>الفواتير السابقة</strong>
+
+            <small>البحث عن فاتورة قديمة</small>
+
+          </button>
+
+        </div>
+
+
+        <!-- إرشادات العامل -->
+        <div class="worker-tip">
+          <span>💡</span>
+
+          <p>
+            لإصدار فاتورة، اضغط على صرف أصناف لسائق،
+            ثم اختر السائق والأصناف والكميات واضغط حفظ الفاتورة.
+          </p>
+        </div>
+
+      </div>
+
+
+      <!-- آخر الفواتير -->
+      <div class="section-heading">
+        <h2>آخر فواتير اليوم</h2>
+
+        <button class="text-button" data-page="archive" type="button">
+          عرض الأرشيف
+        </button>
+      </div>
+
+      <div id="recentInvoices" class="invoice-list">
+        <div class="empty-state">
+          <span>🧾</span>
+          <p>لا توجد فواتير مسجلة اليوم.</p>
+        </div>
+      </div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         صفحة إنشاء الفاتورة
+    ====================================== -->
+    <section id="page-invoice" class="page">
+
+      <div class="page-heading">
+
+        <button class="back-button" data-page="dashboard" type="button">
+          ←
+        </button>
+
+        <div>
+          <h2>صرف أصناف لسائق</h2>
+          <p>اختر السائق والأصناف ثم احفظ الفاتورة.</p>
+        </div>
+
+      </div>
+
+
+      <form id="invoiceForm">
+
+        <div class="form-card">
+
+          <div class="form-group">
+            <label for="invoiceDriver">① اختر السائق *</label>
+
+            <select id="invoiceDriver" required>
+              <option value="">اختر اسم السائق</option>
+            </select>
+          </div>
+
+
+          <div class="form-group">
+            <label for="invoiceDate">تاريخ الفاتورة *</label>
+
+            <input
+              type="date"
+              id="invoiceDate"
+              required>
+          </div>
+
+
+          <div class="form-group">
+            <label for="invoiceNotes">ملاحظات (اختياري)</label>
+
+            <textarea
+              id="invoiceNotes"
+              rows="2"
+              placeholder="أي ملاحظة تخص هذه الفاتورة"></textarea>
+          </div>
+
+        </div>
+
+
+
+        <!-- الأصناف -->
+        <div class="section-heading">
+          <h3>② الأصناف المصروفة</h3>
+
+          <button
+            type="button"
+            id="addInvoiceItem"
+            class="small-button">
+
+            ＋ إضافة صنف
+
+          </button>
+        </div>
+
+
+        <div id="invoiceItems" class="invoice-items"></div>
+
+
+
+        <!-- إجمالي الفاتورة -->
+        <div class="invoice-total-card">
+          <span>إجمالي الفاتورة</span>
+
+          <strong id="invoiceGrandTotal">0.00 ر.س</strong>
+        </div>
+
+
+        <!-- حفظ -->
+        <button
+          type="submit"
+          class="primary-button full-button">
+
+          💾 حفظ الفاتورة
+
+        </button>
+
+
+        <button
+          type="button"
+          class="secondary-button full-button"
+          data-page="dashboard">
+
+          الرجوع للرئيسية
+
+        </button>
+
+      </form>
+
+    </section>
+
+
+
+    <!-- =====================================
+         إدارة السائقين
+    ====================================== -->
+    <section id="page-drivers" class="page">
+
+      <div class="page-heading">
+
+        <button class="back-button" data-page="settings" type="button">
+          ←
+        </button>
+
+        <div>
+          <h2>إدارة السائقين</h2>
+          <p>إضافة السائقين وتعديل بياناتهم.</p>
+        </div>
+
+      </div>
+
+
+      <form id="driverForm" class="form-card">
+
+        <input type="hidden" id="driverId">
+
+
+        <div class="form-group">
+          <label for="driverName">اسم السائق *</label>
+
+          <input
+            id="driverName"
+            type="text"
+            placeholder="اكتب اسم السائق"
+            required>
+        </div>
+
+
+        <div class="form-group">
+          <label for="driverPhone">رقم جوال السائق</label>
+
+          <input
+            id="driverPhone"
+            type="tel"
+            inputmode="tel"
+            placeholder="05xxxxxxxx">
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            id="saveDriverButton"
+            class="primary-button">
+
+            حفظ السائق
+
+          </button>
+
+
+          <button
+            type="button"
+            id="cancelDriverEdit"
+            class="secondary-button hidden">
+
+            إلغاء التعديل
+
+          </button>
+
+        </div>
+
+      </form>
+
+
+
+      <div class="section-heading">
+
+        <h3>قائمة السائقين</h3>
+
+        <span id="driversCount" class="count-badge">0</span>
+
+      </div>
+
+
+      <div id="driversList" class="data-list"></div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         إدارة الأصناف والأسعار
+    ====================================== -->
+    <section id="page-items" class="page">
+
+      <div class="page-heading">
+
+        <button class="back-button" data-page="settings" type="button">
+          ←
+        </button>
+
+        <div>
+          <h2>إدارة الأصناف والأسعار</h2>
+          <p>أضف الأصناف وحدد أسعارها مرة واحدة.</p>
+        </div>
+
+      </div>
+
+
+
+      <form id="itemForm" class="form-card">
+
+        <input type="hidden" id="itemId">
+
+
+        <div class="form-group">
+          <label for="itemName">اسم الصنف *</label>
+
+          <input
+            id="itemName"
+            type="text"
+            placeholder="مثال: دجاج، رز، مشروب"
+            required>
+        </div>
+
+
+        <div class="form-row">
+
+          <div class="form-group">
+            <label for="itemPrice">سعر الوحدة *</label>
+
+            <input
+              id="itemPrice"
+              type="number"
+              min="0"
+              step="0.01"
+              inputmode="decimal"
+              placeholder="0.00"
+              required>
+          </div>
+
+
+          <div class="form-group">
+            <label for="itemUnit">وحدة الصنف</label>
+
+            <input
+              id="itemUnit"
+              type="text"
+              placeholder="حبة، كرتون، كيلو">
+          </div>
+
+        </div>
+
+
+        <div class="form-actions">
+
+          <button
+            type="submit"
+            id="saveItemButton"
+            class="primary-button">
+
+            حفظ الصنف
+
+          </button>
+
+
+          <button
+            type="button"
+            id="cancelItemEdit"
+            class="secondary-button hidden">
+
+            إلغاء التعديل
+
+          </button>
+
+        </div>
+
+      </form>
+
+
+
+      <div class="section-heading">
+
+        <h3>الأصناف المسجلة</h3>
+
+        <span id="itemsCount" class="count-badge">0</span>
+
+      </div>
+
+
+      <div id="itemsList" class="data-list"></div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         التقارير اليومية
+    ====================================== -->
+    <section id="page-reports" class="page">
+
+      <div class="page-heading">
+
+        <button class="back-button" data-page="dashboard" type="button">
+          ←
+        </button>
+
+        <div>
+          <h2>حسابات السائقين</h2>
+          <p>راجع الأصناف والمبالغ المصروفة لكل سائق.</p>
+        </div>
+
+      </div>
+
+
+
+      <div class="form-card">
+
+        <div class="form-group">
+          <label for="reportDate">تاريخ التقرير</label>
+
+          <input
+            type="date"
+            id="reportDate">
+        </div>
+
+
+        <div class="form-group">
+          <label for="reportDriver">اختر السائق</label>
+
+          <select id="reportDriver">
+            <option value="all">جميع السائقين</option>
+          </select>
+        </div>
+
+
+        <button
+          type="button"
+          id="generateReport"
+          class="primary-button full-button">
+
+          عرض الحسابات
+
+        </button>
+
+      </div>
+
+
+
+      <div id="reportSummary" class="report-summary"></div>
+
+      <div id="reportResults"></div>
+
+
+
+      <button
+        type="button"
+        id="shareReports"
+        class="whatsapp-button full-button">
+
+        🟢 تجهيز التقارير للإرسال عبر واتساب
+
+      </button>
+
+
+      <p class="help-text">
+        ستُفتح رسالة واتساب لتراجعها وترسلها بنفسك.
+      </p>
+
+    </section>
+
+
+
+    <!-- =====================================
+         أرشيف الفواتير
+    ====================================== -->
+    <section id="page-archive" class="page">
+
+      <div class="page-heading">
+
+        <button class="back-button" data-page="dashboard" type="button">
+          ←
+        </button>
+
+        <div>
+          <h2>الفواتير السابقة</h2>
+          <p>ابحث عن الفواتير القديمة وراجع تفاصيلها.</p>
+        </div>
+
+      </div>
+
+
+
+      <div class="form-card">
+
+        <div class="form-group">
+          <label for="archiveDate">البحث بالتاريخ</label>
+
+          <input
+            type="date"
+            id="archiveDate">
+        </div>
+
+
+        <div class="form-group">
+          <label for="archiveDriver">البحث باسم السائق</label>
+
+          <select id="archiveDriver">
+            <option value="all">جميع السائقين</option>
+          </select>
+        </div>
+
+
+        <button
+          type="button"
+          id="searchArchive"
+          class="primary-button full-button">
+
+          🔍 بحث في الأرشيف
+
+        </button>
+
+
+        <button
+          type="button"
+          id="showAllArchive"
+          class="secondary-button full-button">
+
+          عرض جميع الفواتير
+
+        </button>
+
+      </div>
+
+
+
+      <div id="archiveSummary" class="archive-summary"></div>
+
+      <div id="archiveList" class="invoice-list"></div>
+
+    </section>
+
+
+
+    <!-- =====================================
+         الإعدادات
+    ====================================== -->
+    <section id="page-settings" class="page">
+
+      <div class="page-heading">
+
+        <button class="back-button" data-page="dashboard" type="button">
+          ←
+        </button>
+
+        <div>
+          <h2>الإعدادات</h2>
+          <p>إدارة بيانات التطبيق وحفظ نسخة احتياطية.</p>
+        </div>
+
+      </div>
+
+
+
+      <!-- إدارة السائقين -->
+      <div class="settings-card">
+
+        <span class="settings-icon">👨‍✈️</span>
+
+        <h3>إدارة السائقين</h3>
+
+        <p>
+          إضافة سائق جديد أو تعديل بيانات السائقين المسجلين.
+        </p>
+
+        <button
+          type="button"
+          class="primary-button full-button"
+          data-page="drivers">
+
+          فتح إدارة السائقين
+
+        </button>
+
+      </div>
+
+
+
+      <!-- إدارة الأصناف -->
+      <div class="settings-card">
+
+        <span class="settings-icon">📦</span>
+
+        <h3>إدارة الأصناف والأسعار</h3>
+
+        <p>
+          إضافة الأصناف وتعديل أسعار الوحدات.
+        </p>
+
+        <button
+          type="button"
+          class="primary-button full-button"
+          data-page="items">
+
+          فتح إدارة الأصناف
+
+        </button>
+
+      </div>
+
+
+
+      <!-- النسخة الاحتياطية -->
+      <div class="settings-card">
+
+        <span class="settings-icon">📤</span>
+
+        <h3>تصدير نسخة احتياطية</h3>
+
+        <p>
+          احفظ نسخة من بيانات التطبيق في ملف على جوالك.
+        </p>
+
+        <button
+          type="button"
+          id="exportBackup"
+          class="primary-button full-button">
+
+          تنزيل النسخة الاحتياطية
+
+        </button>
+
+      </div>
+
+
+
+      <!-- استعادة البيانات -->
+      <div class="settings-card">
+
+        <span class="settings-icon">📥</span>
+
+        <h3>استعادة نسخة احتياطية</h3>
+
+        <p>
+          استرجع البيانات من ملف نسخة احتياطية سابق.
+        </p>
+
+        <input
+          type="file"
+          id="importBackupFile"
+          accept=".json,application/json">
+
+
+        <button
+          type="button"
+          id="importBackup"
+          class="secondary-button full-button">
+
+          استعادة البيانات
+
+        </button>
+
+      </div>
+
+
+
+      <!-- إنهاء الدوام -->
+      <div class="settings-card danger-card">
+
+        <span class="settings-icon">⚠️</span>
+
+        <h3>إنهاء الدوام</h3>
+
+        <p>
+          تُحفظ فواتير اليوم في الأرشيف،
+          وتُجهز التقارير للإرسال عبر واتساب،
+          دون حذف الفواتير السابقة.
+        </p>
+
+        <button
+          type="button"
+          id="finishDay"
+          class="danger-button full-button">
+
+          إنهاء الدوام وإرسال التقارير
+
+        </button>
+
+      </div>
+
+
+
+      <!-- تنبيه البيانات -->
+      <div class="notice-card">
+
+        <strong>تنبيه مهم</strong>
+
+        <p>
+          البيانات محفوظة في المتصفح على هذا الجهاز.
+          احفظ نسخة احتياطية بانتظام،
+          ولا تمسح بيانات المتصفح قبل التأكد من وجود نسخة احتياطية.
+        </p>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+
+  <!-- =====================================
+       شريط التنقل السفلي
+  ====================================== -->
+  <nav class="bottom-nav">
+
+    <button
+      class="nav-item active"
+      data-page="dashboard"
+      type="button">
+
+      <span>⌂</span>
+      <small>الرئيسية</small>
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="invoice"
+      type="button">
+
+      <span>＋</span>
+      <small>صرف أصناف</small>
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="reports"
+      type="button">
+
+      <span>▤</span>
+      <small>الحسابات</small>
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="archive"
+      type="button">
+
+      <span>▣</span>
+      <small>الأرشيف</small>
+
+    </button>
+
+
+    <button
+      class="nav-item"
+      data-page="settings"
+      type="button">
+
+      <span>⚙</span>
+      <small>الإعدادات</small>
+
+    </button>
+
+  </nav>
+
+
+
+  <!-- رسائل التنبيه -->
+  <div
+    id="toast"
+    class="toast"
+    role="status"
+    aria-live="polite">
+  </div>
+
+
+
+  <!-- نافذة تفاصيل الفاتورة -->
+  <div id="modal" class="modal hidden">
+
+    <div
+      class="modal-backdrop"
+      data-close-modal>
+    </div>
+
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h3 id="modalTitle">تفاصيل الفاتورة</h3>
+
+        <button
+          type="button"
+          class="modal-close"
+          data-close-modal
+          aria-label="إغلاق">
+
+          ×
+
+        </button>
+
+      </div>
+
+
+      <div id="modalBody"></div>
+
+    </div>
+
+  </div>
+
+
+
+  <!-- ملف وظائف التطبيق -->
+  <script src="./app.js"></script>
+
+
+  <!-- تشغيل التطبيق دون اتصال عند توفر الملفات المخزنة -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("./sw.js")
+          .catch(function (error) {
+            console.error(
+              "تعذر تسجيل Service Worker:",
+              error
+            );
+          });
+      });
+    }
+  </script>
+
+</body>
+</html>
